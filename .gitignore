@@ -35,8 +35,11 @@ mobile-app/.expo-shared/
 *.swo
 
 # Expo auto-generated
-mobile-app/AGENTS.md
-mobile-app/CLAUDE.md
+mobile-app/
+mobile_app/.dart_tool/
+mobile_app/build/
+mobile_app/.android/
+mobile_app/.ios/
 
 # OS
 .DS_Store
