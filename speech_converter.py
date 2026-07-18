@@ -2,13 +2,31 @@ import os
 import sys
 import argparse
 import tempfile
+import json
 from pathlib import Path
 
 from google.cloud import speech
 from google.cloud import texttospeech
 
-# Configurar credenciales: usa variable de entorno o busca el archivo local
-if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+# Configurar credenciales
+creds_value = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")
+
+if creds_value:
+    # Verificar si es JSON directo (Vercel) o ruta de archivo (local)
+    if creds_value.startswith("{"):
+        # Es JSON directo, escribir a archivo temporal
+        creds_data = json.loads(creds_value)
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".json", mode="w")
+        json.dump(creds_data, tmp)
+        tmp.close()
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp.name
+    elif not Path(creds_value).exists():
+        # Es ruta pero no existe, buscar archivo local
+        CREDENTIALS_PATH = Path(__file__).parent / "zampa-8795f-61aef27cf55a.json"
+        if CREDENTIALS_PATH.exists():
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(CREDENTIALS_PATH)
+else:
+    # No hay variable de entorno, buscar archivo local
     CREDENTIALS_PATH = Path(__file__).parent / "zampa-8795f-61aef27cf55a.json"
     if CREDENTIALS_PATH.exists():
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(CREDENTIALS_PATH)

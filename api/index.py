@@ -64,7 +64,8 @@ async def transcribe(
             result = transcribe_audio(tmp_path, language)
         return {"text": result, "language": language}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error transcribe: {e}")
+        raise HTTPException(status_code=500, detail="Error al transcribir el audio. Verifica la configuracion.")
     finally:
         os.unlink(tmp_path)
 
@@ -85,9 +86,10 @@ async def synthesize(request: SynthesizeRequest):
             filename="synthesized.mp3",
         )
     except Exception as e:
+        print(f"Error synthesize: {e}")
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Error al sintetizar el texto. Verifica la configuracion.")
 
 
 @app.get("/")
