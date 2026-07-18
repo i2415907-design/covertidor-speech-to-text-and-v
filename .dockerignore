@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
+*.md
+*.txt
+!requirements.txt
+audio_files/
+zampa-8795f-*.json
+.env
+.DS_Store

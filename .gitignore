@@ -1,0 +1,47 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Credenciales Google Cloud
+zampa-8795f-*.json
+*.json
+!api/requirements.txt
+.env
+
+# Notas personales
+generar api y programación*
+usar la aplicación desde*
+
+# Archivos de audio
+audio_files/
+
+# Node.js (mobile-app)
+mobile-app/node_modules/
+mobile-app/.expo/
+mobile-app/dist/
+mobile-app/.expo-shared/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Expo auto-generated
+mobile-app/AGENTS.md
+mobile-app/CLAUDE.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporales
+*.tmp
+*.log
