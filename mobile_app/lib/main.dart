@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:record/record.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-const String apiBaseUrl = 'https://TU-SERVICE.run.app';
+const String apiBaseUrl = 'https://covertidor-speech-to-text-and-v.vercel.app';
 
 const Map<String, String> languages = {
   'es': 'Espanol',
@@ -59,15 +59,27 @@ class _HomePageState extends State<HomePage> {
   String _inputText = '';
   String? _audioPath;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final AudioRecorder _recorder = AudioRecorder();
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   final TextEditingController _textController = TextEditingController();
+  bool _recorderInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initRecorder();
+  }
 
   @override
   void dispose() {
     _audioPlayer.dispose();
-    _recorder.dispose();
+    _recorder.closeRecorder();
     _textController.dispose();
     super.dispose();
+  }
+
+  Future<void> _initRecorder() async {
+    await _recorder.openRecorder();
+    _recorderInitialized = true;
   }
 
   Future<bool> _checkPermission() async {
@@ -81,16 +93,18 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
+    if (!_recorderInitialized) {
+      await _initRecorder();
+    }
+
     final dir = await getTemporaryDirectory();
     final path = '${dir.path}/recording.wav';
 
-    await _recorder.start(
-      RecordConfig(
-        encoder: AudioEncoder.wav,
-        sampleRate: 16000,
-        numChannels: 1,
-      ),
-      path: path,
+    await _recorder.startRecorder(
+      toFile: path,
+      codec: Codec.pcm16WAV,
+      sampleRate: 16000,
+      numChannels: 1,
     );
 
     setState(() {
@@ -100,7 +114,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _stopRecording() async {
-    final path = await _recorder.stop();
+    final path = await _recorder.stopRecorder();
     setState(() => _isRecording = false);
 
     if (path != null) {
@@ -225,7 +239,6 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 28),
 
-            // VOZ A TEXTO
             const Align(alignment: Alignment.centerLeft, child: Text('Voz a Texto', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
             const SizedBox(height: 4),
             const Align(alignment: Alignment.centerLeft, child: Text('Presiona el boton, habla y se transcribira tu voz', style: TextStyle(color: Colors.grey, fontSize: 13))),
@@ -270,7 +283,6 @@ class _HomePageState extends State<HomePage> {
             Container(height: 1, color: Colors.grey.shade800),
             const SizedBox(height: 24),
 
-            // TEXTO A VOZ
             const Align(alignment: Alignment.centerLeft, child: Text('Texto a Voz', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold))),
             const SizedBox(height: 4),
             const Align(alignment: Alignment.centerLeft, child: Text('Escribe un texto y escucha como suena', style: TextStyle(color: Colors.grey, fontSize: 13))),

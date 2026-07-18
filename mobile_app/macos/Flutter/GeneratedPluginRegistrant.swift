@@ -6,9 +6,9 @@ import FlutterMacOS
 import Foundation
 
 import audioplayers_darwin
-import record_darwin
+import flutter_sound
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AudioplayersDarwinPlugin.register(with: registry.registrar(forPlugin: "AudioplayersDarwinPlugin"))
-  RecordPlugin.register(with: registry.registrar(forPlugin: "RecordPlugin"))
+  FlutterSoundPlugin.register(with: registry.registrar(forPlugin: "FlutterSoundPlugin"))
 }
